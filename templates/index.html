@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search Page</title>
+    <style>
+        body{
+            background-color: #A7BEAE;
+        }
+        
+        .form { 
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        }
+        
+        .eachresult{
+            
+            padding: 20px;
+            margin: 5px;
+            background-color: #E7E8D1;
+            max-width: 300px;
+        }
+        
+        .results{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+    </style>
+
+    
+  </head>
+
+  <body>
+    <div class="form">
+      <form method="POST">
+        {{ form.hidden_tag() }} {{ form.search.label }} {{ form.search() }} {{
+        form.submit() }}
+      </form>
+    </div>
+    <div class="results">
+      <br/>
+      <br/>
+      {% if results|length == 0 %}
+      <div class="eachresult">
+        No matching question found. Please search with more relevant terms.
+      </div>
+      {% else %}
+      {% for result in results %}
+      <div class="eachresult">
+        <a href="{{ result['Question Link'] }}">{{ result['Question Link'] }}</a>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </body>
+</html>
