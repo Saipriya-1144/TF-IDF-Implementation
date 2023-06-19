@@ -12,20 +12,20 @@ def load_vocab():
         idf_values = f.readlines()
 
     for (term, idf_val) in zip(vocab_terms, idf_values):
-        vocab[term.strip()] = int(idf_val.strip())
+        vocab[term.rstrip()] = int(idf_val.rstrip())
 
     return vocab
 
 
 def load_documents():
-    documents = []
+    # documents = []
 
     with open('TF-IDF/documents.txt', 'r') as f:
         documents = f.readlines()
-    documents = [document.strip().split() for document in documents]
+    # documents = [document.strip().split() for document in documents]
 
-    print('Number of documents: ', len(documents))
-    print('Sample document: ', documents[0])
+    # print('Number of documents: ', len(documents))
+    # print('Sample document: ', documents[0])
     return documents
 
 
@@ -83,12 +83,12 @@ def calculate_sorted_order_of_documents(query_terms):
     potential_documents = {}
     ans = []
     for term in query_terms:
-        if vocab_idf_values[term] == 0:
+        if (term not in vocab_idf_values):
             continue
 
         tf_values_by_document = get_tf_dictionary(term)
         idf_value = get_idf_value(term)
-        print(term, tf_values_by_document, idf_value)
+        # print(term, tf_values_by_document, idf_value)
 
         for document in tf_values_by_document:
             if document not in potential_documents:
@@ -96,7 +96,7 @@ def calculate_sorted_order_of_documents(query_terms):
             else:
                 potential_documents[document] += tf_values_by_document[document] * idf_value
 
-        print(potential_documents)
+        # print(potential_documents)
         # divite by the length of the query terms
         for document in potential_documents:
             potential_documents[document] /= len(query_terms)
@@ -105,8 +105,6 @@ def calculate_sorted_order_of_documents(query_terms):
             sorted(potential_documents.items(), key=lambda item: item[1], reverse=True))
 
         # if no doc found
-        if (len(potential_documents) == 0):
-            print("No matching question found. Please search with more relevant terms.")
 
         # Printing ans
         # print("The Question links in Decreasing Order of Relevance are: \n")
@@ -149,8 +147,10 @@ def return_links(query):
 def home():
     form = SearchForm()
     results = []
+
     if form.validate_on_submit():
         query = form.search.data
         q_terms = [term.lower() for term in query.strip().split()]
         results = calculate_sorted_order_of_documents(q_terms)[:20:]
+
     return render_template('index.html', form=form, results=results)
